@@ -1,0 +1,84 @@
+/* ═══════════════════════════════════════════════════════════
+   THEME — Dark & Light mode variables
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Dark theme (default) */
+  --bg: #060609;
+  --s1: #0b0b12;
+  --s2: #10101a;
+  --s3: #161622;
+  --s4: #1c1c2c;
+  --bdr: #ffffff06;
+  --bdr2: #ffffff0c;
+  --bdr3: #ffffff18;
+  --t1: #f0f0f5;
+  --t2: #a1a1b5;
+  --t3: #5a5a72;
+  --t4: #33334a;
+  --red: #ef4444;
+  --red2: #dc2626;
+  --redD: #ef444418;
+  --redG: #ef444440;
+  --amb: #f59e0b;
+  --ambD: #f59e0b15;
+  --grn: #10b981;
+  --grnD: #10b98115;
+  --blu: #3b82f6;
+  --bluD: #3b82f615;
+  --pur: #8b5cf6;
+  --purD: #8b5cf615;
+  --pink: #ec4899;
+  --pinkD: #ec489915;
+  --cyan: #06b6d4;
+  --cyanD: #06b6d415;
+  --fm: 'IBM Plex Mono', monospace;
+  --fd: 'Space Mono', monospace;
+  --fs: 'Playfair Display', serif;
+}
+
+/* ═══ Light theme override ═══ */
+.light {
+  --bg: #f5f5f7;
+  --s1: #ffffff;
+  --s2: #f0f0f3;
+  --s3: #e8e8ed;
+  --s4: #dddde3;
+  --bdr: #00000008;
+  --bdr2: #00000010;
+  --bdr3: #00000020;
+  --t1: #1a1a2e;
+  --t2: #44445a;
+  --t3: #7a7a90;
+  --t4: #a0a0b0;
+  --red: #dc2626;
+  --red2: #b91c1c;
+  --redD: #dc262612;
+  --redG: #dc262630;
+  --amb: #d97706;
+  --ambD: #d9770610;
+  --grn: #059669;
+  --grnD: #05966910;
+  --blu: #2563eb;
+  --bluD: #2563eb10;
+  --pur: #7c3aed;
+  --purD: #7c3aed10;
+  --pink: #db2777;
+  --pinkD: #db277710;
+  --cyan: #0891b2;
+  --cyanD: #0891b210;
+}
+
+.light ::-webkit-scrollbar-thumb { background: #00000018; }
+.light .card { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.light .card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+.light .sb-item.active { background: #dc262610; border-color: #dc262625; }
+.light .av { border-color: rgba(0,0,0,0.12) !important; }
+.light .mdl { border-color: #00000015; }
+.light input,
+.light select,
+.light textarea {
+  background: var(--s2) !important;
+  border-color: #00000012 !important;
+  color: var(--t1) !important;
+}
