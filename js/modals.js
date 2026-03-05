@@ -245,37 +245,39 @@ const _vEntMap = { persona:'personas', empresa:'empresas', grupo:'grupos', parti
 
 function _vGetList(tipo) { return DB[_vEntMap[tipo]] || []; }
 
-// Selected entity IDs stored here
-let _vSelA = null, _vSelB = null;
+function _vShowDrop(inp, drop, tipoSelId) {
+  const tipo = document.getElementById(tipoSelId).value;
+  const q = inp.value.toLowerCase();
+  const list = _vGetList(tipo).filter(x => !q || x.nombre.toLowerCase().includes(q));
+  if (!list.length) { drop.style.display = 'none'; return; }
+  drop.innerHTML = list.slice(0, 40).map(x =>
+    `<div class="ac-item" data-id="${x.id}" data-name="${esc(x.nombre)}">${esc(x.nombre)}</div>`
+  ).join('');
+  drop.style.display = 'block';
+}
 
-function _vInitAC(inputId, dropId, tipoSelId, varName) {
+function _vInitAC(inputId, dropId, tipoSelId) {
   const inp = document.getElementById(inputId);
   const drop = document.getElementById(dropId);
   inp.addEventListener('input', () => {
-    const tipo = document.getElementById(tipoSelId).value;
-    const q = inp.value.toLowerCase();
-    const list = _vGetList(tipo).filter(x => x.nombre.toLowerCase().includes(q));
-    if (!q || !list.length) { drop.style.display = 'none'; return; }
-    drop.innerHTML = list.slice(0, 30).map(x =>
-      `<div class="ac-item" data-id="${x.id}" data-name="${esc(x.nombre)}">${esc(x.nombre)}</div>`
-    ).join('');
-    drop.style.display = 'block';
-    drop.querySelectorAll('.ac-item').forEach(el => {
-      el.addEventListener('click', () => {
-        inp.value = el.dataset.name;
-        if (varName === 'a') _vSelA = el.dataset.id; else _vSelB = el.dataset.id;
-        drop.style.display = 'none';
-      });
-    });
+    inp.removeAttribute('data-id');
+    _vShowDrop(inp, drop, tipoSelId);
   });
-  inp.addEventListener('blur', () => setTimeout(() => drop.style.display = 'none', 200));
-  inp.addEventListener('focus', () => { if (inp.value) inp.dispatchEvent(new Event('input')); });
+  inp.addEventListener('focus', () => _vShowDrop(inp, drop, tipoSelId));
+  drop.addEventListener('mousedown', e => {
+    const item = e.target.closest('.ac-item');
+    if (!item) return;
+    e.preventDefault();
+    inp.value = item.dataset.name;
+    inp.setAttribute('data-id', item.dataset.id);
+    drop.style.display = 'none';
+  });
+  inp.addEventListener('blur', () => { drop.style.display = 'none'; });
 }
 
-function _vResetAC(inputId, dropId, varName) {
+function _vResetAC(inputId, dropId) {
   const inp = document.getElementById(inputId);
-  if (inp) { inp.value = ''; }
-  if (varName === 'a') _vSelA = null; else _vSelB = null;
+  if (inp) { inp.value = ''; inp.removeAttribute('data-id'); }
   const drop = document.getElementById(dropId);
   if (drop) drop.style.display = 'none';
 }
@@ -340,12 +342,11 @@ function mAddVinculo(preset) {
   const preA = preset ? preset.tipo : 'persona';
   const preAid = preset ? preset.id : '';
   const preAname = preset ? ((_vGetList(preA).find(x => String(x.id) === String(preAid))||{}).nombre||'') : '';
-  _vSelA = preAid ? String(preAid) : null; _vSelB = null;
   return `<h3>NUEVO VINCULO <button onclick="closeModal()">✕</button></h3>
-  <div class="r2"><div><label>ENTIDAD A — TIPO</label><select id="fv-ta" onchange="_vResetAC('fv-a-inp','fv-a-drop','a')">${tipoOpts}</select></div>
-  <div style="position:relative"><label>ENTIDAD A</label><input id="fv-a-inp" autocomplete="off" placeholder="Buscar..." value="${esc(preAname)}">
+  <div class="r2"><div><label>ENTIDAD A — TIPO</label><select id="fv-ta" onchange="_vResetAC('fv-a-inp','fv-a-drop')">${tipoOpts}</select></div>
+  <div style="position:relative"><label>ENTIDAD A</label><input id="fv-a-inp" autocomplete="off" placeholder="Buscar..." value="${esc(preAname)}"${preAid?` data-id="${preAid}"`:''}>
   <div id="fv-a-drop" class="ac-drop" style="display:none"></div></div></div>
-  <div class="r2"><div><label>ENTIDAD B — TIPO</label><select id="fv-tb" onchange="_vResetAC('fv-b-inp','fv-b-drop','b')">${tipoOpts}</select></div>
+  <div class="r2"><div><label>ENTIDAD B — TIPO</label><select id="fv-tb" onchange="_vResetAC('fv-b-inp','fv-b-drop')">${tipoOpts}</select></div>
   <div style="position:relative"><label>ENTIDAD B</label><input id="fv-b-inp" autocomplete="off" placeholder="Buscar...">
   <div id="fv-b-drop" class="ac-drop" style="display:none"></div></div></div>
   <div class="r2"><div><label>TIPO DE VINCULO</label><select id="fv-tipo" onchange="_vUpdSubtipos()">${tipoVincOpts}</select></div>
@@ -358,14 +359,16 @@ function mAddVinculo(preset) {
   <button class="sbm" onclick="submitVinculo()">REGISTRAR VINCULO</button><button class="cnc" onclick="closeModal()">Cancelar</button>
   <script>
     document.getElementById('fv-ta').value='${preA}';
-    _vInitAC('fv-a-inp','fv-a-drop','fv-ta','a');
-    _vInitAC('fv-b-inp','fv-b-drop','fv-tb','b');
+    _vInitAC('fv-a-inp','fv-a-drop','fv-ta');
+    _vInitAC('fv-b-inp','fv-b-drop','fv-tb');
   <\/script>`;
 }
 async function submitVinculo() {
   const ta = gv('fv-ta'), tb = gv('fv-tb');
-  const aid = _vSelA, bid = _vSelB;
-  if (!aid || !bid) { alert('Selecciona ambas entidades'); return; }
+  const aInp = document.getElementById('fv-a-inp'), bInp = document.getElementById('fv-b-inp');
+  const aid = aInp ? aInp.getAttribute('data-id') : null;
+  const bid = bInp ? bInp.getAttribute('data-id') : null;
+  if (!aid || !bid) { alert('Selecciona ambas entidades del dropdown'); return; }
   const row = {
     entidad_a_tipo: ta, entidad_a_id: parseInt(aid)||aid,
     entidad_b_tipo: tb, entidad_b_id: parseInt(bid)||bid,
