@@ -10,7 +10,7 @@ async function doLogin() {
   const errEl = document.getElementById('lerr');
   if (!email || !pass) { errEl.textContent = 'Ingrese email y contraseña'; errEl.classList.remove('hidden'); return; }
   errEl.textContent = 'Verificando...'; errEl.classList.remove('hidden'); errEl.style.color = 'var(--t3)';
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
   if (error) { errEl.textContent = 'Credenciales incorrectas'; errEl.style.color = 'var(--red)'; return; }
   isAdmin = true;
   document.getElementById('app').classList.add('admin-mode');
@@ -20,7 +20,7 @@ async function doLogin() {
 }
 
 async function doLogout() {
-  await supabase.auth.signOut();
+  await sb.auth.signOut();
   isAdmin = false;
   document.getElementById('app').classList.remove('admin-mode');
   document.getElementById('bl').classList.remove('hidden');
@@ -29,7 +29,7 @@ async function doLogout() {
 }
 
 async function checkSession() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await sb.auth.getSession();
   if (session) {
     isAdmin = true;
     document.getElementById('app').classList.add('admin-mode');

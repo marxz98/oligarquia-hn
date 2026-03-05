@@ -4,9 +4,10 @@ function rDash(c) {
   const sp = DB.personas.filter(p => p.esSocioPrincipal);
   const stats = [
     {v:DB.personas.length,l:'PERSONAS',c:'var(--red)',p:'personas'},{v:DB.grupos.length,l:'GRUPOS',c:'var(--pink)',p:'grupos'},
-    {v:DB.empresas.length,l:'EMPRESAS',c:'var(--amb)',p:'empresas'},{v:DB.partidos.length,l:'PARTIDOS',c:'var(--blu)',p:'partidos'},
+    {v:DB.empresas.length,l:'EMPRESAS',c:'var(--amb)',p:'empresas'},{v:DB.bancos.length,l:'BANCOS',c:'#f97316',p:'bancos'},
     {v:DB.medios.length,l:'MEDIOS',c:'var(--cyan)',p:'medios'},{v:DB.carteles.length,l:'CARTELES',c:'var(--pur)',p:'carteles'},
-    {v:DB.zedes.length,l:'ZEDEs',c:'#dc2626',p:'dashboard'},{v:al.length,l:'ALERTAS',c:'#f87171',p:'personas'}
+    {v:DB.zedes.length,l:'ZEDEs',c:'#dc2626',p:'zedes'},{v:DB.casos.length,l:'CASOS',c:'#3b82f6',p:'casos'},
+    {v:DB.investigaciones.length,l:'INVESTIG.',c:'#8b5cf6',p:'investigaciones'},{v:al.length,l:'ALERTAS',c:'#f87171',p:'personas'}
   ];
   c.innerHTML = `<div class="sh"><div><h2>Radiografía del Poder</h2><p>Base de datos ciudadana — Conectada a PostgreSQL en tiempo real</p></div></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;margin-bottom:16px">

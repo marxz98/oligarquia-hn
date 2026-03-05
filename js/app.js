@@ -12,8 +12,10 @@ function nav(pg, dt) {
   if (sim) { sim.stop(); sim = null; }
   c.scrollTop = 0;
   const R = { dashboard:rDash, red:rNet, personas:rPersonas, grupos:rGrupos, empresas:rEmpresas,
-    partidos:rPartidos, medios:rMedios, carteles:rCarteles,
-    'p-det':rPDet, 'g-det':rGDet, 'e-det':rEDet, 'pt-det':rPtDet, 'm-det':rMDet, 'c-det':rCDet };
+    partidos:rPartidos, medios:rMedios, carteles:rCarteles, bancos:rBancos, instituciones:rInstituciones,
+    zedes:rZedes, casos:rCasos, investigaciones:rInvestigaciones,
+    'p-det':rPDet, 'g-det':rGDet, 'e-det':rEDet, 'pt-det':rPtDet, 'm-det':rMDet, 'c-det':rCDet,
+    'z-det':rZDet, 'b-det':rBDet, 'i-det':rIDet, 'cj-det':rCjDet, 'inv-det':rInvDet };
   if (R[pg]) R[pg](c, dt);
 }
 function doSearch() { nav(page); }

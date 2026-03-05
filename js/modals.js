@@ -61,19 +61,19 @@ function readPForm() {
 }
 async function submitPersona() {
   const row = readPForm(); if (!row) return;
-  const { data, error } = await supabase.from('personas').insert(row).select().single();
+  const { data, error } = await sb.from('personas').insert(row).select().single();
   if (error) { alert('Error: '+error.message); return; }
   DB.personas.push(mapPersona(data)); resolveRelations(); updCounts(); closeModal(); nav(page);
 }
 async function savePersona(id) {
   const row = readPForm(); if (!row) return;
-  const { data, error } = await supabase.from('personas').update(row).eq('id',id).select().single();
+  const { data, error } = await sb.from('personas').update(row).eq('id',id).select().single();
   if (error) { alert('Error: '+error.message); return; }
   const i = DB.personas.findIndex(x => x.id===id); if (i>=0) DB.personas[i] = mapPersona(data);
   resolveRelations(); updCounts(); closeModal(); nav('p-det',id);
 }
 async function delPersona(id) {
-  const { error } = await supabase.from('personas').delete().eq('id',id);
+  const { error } = await sb.from('personas').delete().eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   DB.personas = DB.personas.filter(x => x.id!==id); resolveRelations(); updCounts(); closeModal(); nav('personas');
 }
@@ -102,21 +102,21 @@ function mEditGrupo(nombre) {
 async function submitGrupo() {
   const n = gv('fg-nombre'); if (!n) return alert('Nombre obligatorio');
   const row = { nombre:n, origen_capital:gv('fg-origen'), actividad_principal:gv('fg-act')||null, descripcion:gv('fg-desc')||null, color:gv('fg-color')||null };
-  const { data, error } = await supabase.from('grupos').insert(row).select().single();
+  const { data, error } = await sb.from('grupos').insert(row).select().single();
   if (error) { alert('Error: '+error.message); return; }
   DB.grupos.push(mapGrupo(data)); GC[n] = row.color||'#6b7280'; updCounts(); closeModal(); nav('grupos');
 }
 async function saveGrupo(id, oldName) {
   const n = gv('fg-nombre'); if (!n) return;
   const row = { nombre:n, origen_capital:gv('fg-origen'), actividad_principal:gv('fg-act')||null, descripcion:gv('fg-desc')||null, ejes_acumulacion:gv('fg-ejes')||null, color:gv('fg-color')||null };
-  const { error } = await supabase.from('grupos').update(row).eq('id',id);
+  const { error } = await sb.from('grupos').update(row).eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   const i = DB.grupos.findIndex(x => x.id===id); if (i>=0) Object.assign(DB.grupos[i], { nombre:n, origenCapital:row.origen_capital, actividadPrincipal:row.actividad_principal, descripcion:row.descripcion, ejesAcumulacion:row.ejes_acumulacion, color:row.color });
   if (n !== oldName) { DB.personas.forEach(p => { if (p.grupo===oldName) p.grupo=n; }); GC[n]=GC[oldName]; delete GC[oldName]; }
   resolveRelations(); updCounts(); closeModal(); nav('g-det',n);
 }
 async function delGrupo(id) {
-  const { error } = await supabase.from('grupos').delete().eq('id',id);
+  const { error } = await sb.from('grupos').delete().eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   DB.grupos = DB.grupos.filter(x => x.id!==id); resolveRelations(); updCounts(); closeModal(); nav('grupos');
 }
@@ -142,20 +142,20 @@ function mEditEmpresa(id) {
 async function submitEmpresa() {
   const n = gv('fe-nombre'); if (!n) return alert('Nombre obligatorio');
   const row = { nombre:n, razon_social:gv('fe-razon')||null, grupo_id:grupoIdByName(gv('fe-grupo')), anio_constitucion:parseInt(gv('fe-anio'))||null, actividad_economica:gv('fe-act')||null, notas:gv('fe-notas')||null };
-  const { data, error } = await supabase.from('empresas').insert(row).select().single();
+  const { data, error } = await sb.from('empresas').insert(row).select().single();
   if (error) { alert('Error: '+error.message); return; }
   DB.empresas.push(mapEmpresa(data)); resolveRelations(); updCounts(); closeModal(); nav(page);
 }
 async function saveEmpresa(id) {
   const n = gv('fe-nombre'); if (!n) return;
   const row = { nombre:n, razon_social:gv('fe-razon')||null, grupo_id:grupoIdByName(gv('fe-grupo')), anio_constitucion:parseInt(gv('fe-anio'))||null, actividad_economica:gv('fe-act')||null, notas:gv('fe-notas')||null };
-  const { error } = await supabase.from('empresas').update(row).eq('id',id);
+  const { error } = await sb.from('empresas').update(row).eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   const i = DB.empresas.findIndex(x => x.id===id); if (i>=0) { DB.empresas[i] = { ...DB.empresas[i], nombre:n, razonSocial:row.razon_social, grupoId:row.grupo_id, anioConstitucion:row.anio_constitucion, actividadEconomica:row.actividad_economica, notas:row.notas }; }
   resolveRelations(); updCounts(); closeModal(); nav('e-det',id);
 }
 async function delEmpresa(id) {
-  const { error } = await supabase.from('empresas').delete().eq('id',id);
+  const { error } = await sb.from('empresas').delete().eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   DB.empresas = DB.empresas.filter(x => x.id!==id); resolveRelations(); updCounts(); closeModal(); nav('empresas');
 }
@@ -179,20 +179,20 @@ function mEditMedio(id) {
 async function submitMedio() {
   const n = gv('fm-nombre'); if (!n) return alert('Nombre obligatorio');
   const row = { nombre:n, canal:gv('fm-canal')||null, grupo_id:grupoIdByName(gv('fm-grupo')), fundador:gv('fm-fund')||null, descripcion:gv('fm-desc')||null };
-  const { data, error } = await supabase.from('medios').insert(row).select().single();
+  const { data, error } = await sb.from('medios').insert(row).select().single();
   if (error) { alert('Error: '+error.message); return; }
   DB.medios.push(mapMedio(data)); resolveRelations(); updCounts(); closeModal(); nav(page);
 }
 async function saveMedio(id) {
   const n = gv('fm-nombre'); if (!n) return;
   const row = { nombre:n, canal:gv('fm-canal')||null, grupo_id:grupoIdByName(gv('fm-grupo')), fundador:gv('fm-fund')||null, descripcion:gv('fm-desc')||null };
-  const { error } = await supabase.from('medios').update(row).eq('id',id);
+  const { error } = await sb.from('medios').update(row).eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   const i = DB.medios.findIndex(x => x.id===id); if (i>=0) Object.assign(DB.medios[i], { nombre:n, canal:row.canal, grupoId:row.grupo_id, fundador:row.fundador, descripcion:row.descripcion });
   resolveRelations(); updCounts(); closeModal(); nav('m-det',id);
 }
 async function delMedio(id) {
-  const { error } = await supabase.from('medios').delete().eq('id',id);
+  const { error } = await sb.from('medios').delete().eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   DB.medios = DB.medios.filter(x => x.id!==id); updCounts(); closeModal(); nav('medios');
 }
@@ -219,20 +219,20 @@ async function submitCartel() {
   const n = gv('fc-nombre'); if (!n) return alert('Nombre obligatorio');
   const id = n.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
   const row = { id, nombre:n, nombre_completo:gv('fc-full')||null, zona:gv('fc-zona')||null, descripcion:gv('fc-desc')||null, operaciones:gv('fc-ops')||null };
-  const { data, error } = await supabase.from('carteles').insert(row).select().single();
+  const { data, error } = await sb.from('carteles').insert(row).select().single();
   if (error) { alert('Error: '+error.message); return; }
   DB.carteles.push(mapCartel(data)); updCounts(); closeModal(); nav(page);
 }
 async function saveCartel(id) {
   const n = gv('fc-nombre'); if (!n) return;
   const row = { nombre:n, nombre_completo:gv('fc-full')||null, zona:gv('fc-zona')||null, descripcion:gv('fc-desc')||null, operaciones:gv('fc-ops')||null };
-  const { error } = await supabase.from('carteles').update(row).eq('id',id);
+  const { error } = await sb.from('carteles').update(row).eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   const i = DB.carteles.findIndex(x => x.id===id); if (i>=0) Object.assign(DB.carteles[i], { nombre:n, nombreCompleto:row.nombre_completo, zona:row.zona, descripcion:row.descripcion, operaciones:row.operaciones });
   updCounts(); closeModal(); nav('c-det',id);
 }
 async function delCartel(id) {
-  const { error } = await supabase.from('carteles').delete().eq('id',id);
+  const { error } = await sb.from('carteles').delete().eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   DB.carteles = DB.carteles.filter(x => x.id!==id); updCounts(); closeModal(); nav('carteles');
 }

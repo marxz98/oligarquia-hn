@@ -83,13 +83,13 @@ function resolveRelations() {
 async function loadAllData() {
   try {
     const [personas,grupos,empresas,partidos,medios,carteles,datosGrupo] = await Promise.all([
-      supabase.from('personas').select('*').order('id'),
-      supabase.from('grupos').select('*').order('id'),
-      supabase.from('empresas').select('*').order('id'),
-      supabase.from('partidos').select('*').order('id'),
-      supabase.from('medios').select('*').order('id'),
-      supabase.from('carteles').select('*').order('id'),
-      supabase.from('datos_financieros_grupo').select('*').order('ranking')
+      sb.from('personas').select('*').order('id'),
+      sb.from('grupos').select('*').order('id'),
+      sb.from('empresas').select('*').order('id'),
+      sb.from('partidos').select('*').order('id'),
+      sb.from('medios').select('*').order('id'),
+      sb.from('carteles').select('*').order('id'),
+      sb.from('datos_financieros_grupo').select('*').order('ranking')
     ]);
     for (const r of [personas,grupos,empresas,partidos,medios,carteles,datosGrupo]) {
       if (r.error) throw r.error;
@@ -104,11 +104,11 @@ async function loadAllData() {
 
     // Load new entities (non-blocking)
     const [zedes,investigaciones,casos,instituciones,bancos] = await Promise.all([
-      supabase.from('zedes').select('*').order('id'),
-      supabase.from('investigaciones').select('*').order('id'),
-      supabase.from('casos_judiciales').select('*').order('id'),
-      supabase.from('instituciones').select('*').order('id'),
-      supabase.from('bancos').select('*').order('id')
+      sb.from('zedes').select('*').order('id'),
+      sb.from('investigaciones').select('*').order('id'),
+      sb.from('casos_judiciales').select('*').order('id'),
+      sb.from('instituciones').select('*').order('id'),
+      sb.from('bancos').select('*').order('id')
     ]);
     DB.zedes = (zedes.data || []);
     DB.investigaciones = (investigaciones.data || []);

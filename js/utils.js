@@ -32,6 +32,8 @@ function updCounts() {
   const s = (id,v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
   s('c-p', DB.personas.length); s('c-g', DB.grupos.length); s('c-e', DB.empresas.length);
   s('c-pt', DB.partidos.length); s('c-m', DB.medios.length); s('c-c', DB.carteles.length);
+  s('c-b', DB.bancos.length); s('c-i', DB.instituciones.length);
+  s('c-z', DB.zedes.length); s('c-cj', DB.casos.length); s('c-inv', DB.investigaciones.length);
   s('ts-p', DB.personas.length); s('ts-e', DB.empresas.length);
   s('ts-n', DB.personas.filter(p => p.alertasLegales).length);
   s('ts-a', DB.personas.filter(p => p.alertasLegales).length);
