@@ -239,16 +239,99 @@ async function delCartel(id) {
 }
 
 // ═══ VINCULO ═══
-function entidadOpts(tipo) {
-  const map = { persona:DB.personas, empresa:DB.empresas, grupo:DB.grupos, partido:DB.partidos,
-    medio:DB.medios, cartel:DB.carteles, banco:DB.bancos, institucion:DB.instituciones,
-    zede:DB.zedes, caso:DB.casos, investigacion:DB.investigaciones };
-  const arr = map[tipo] || [];
-  return arr.map(x => `<option value="${x.id}">${esc(x.nombre)}</option>`).join('');
+const _vEntMap = { persona:'personas', empresa:'empresas', grupo:'grupos', partido:'partidos',
+  medio:'medios', cartel:'carteles', banco:'bancos', institucion:'instituciones',
+  zede:'zedes', caso:'casos', investigacion:'investigaciones' };
+
+function _vGetList(tipo) { return DB[_vEntMap[tipo]] || []; }
+
+// Selected entity IDs stored here
+let _vSelA = null, _vSelB = null;
+
+function _vInitAC(inputId, dropId, tipoSelId, varName) {
+  const inp = document.getElementById(inputId);
+  const drop = document.getElementById(dropId);
+  inp.addEventListener('input', () => {
+    const tipo = document.getElementById(tipoSelId).value;
+    const q = inp.value.toLowerCase();
+    const list = _vGetList(tipo).filter(x => x.nombre.toLowerCase().includes(q));
+    if (!q || !list.length) { drop.style.display = 'none'; return; }
+    drop.innerHTML = list.slice(0, 30).map(x =>
+      `<div class="ac-item" data-id="${x.id}" data-name="${esc(x.nombre)}">${esc(x.nombre)}</div>`
+    ).join('');
+    drop.style.display = 'block';
+    drop.querySelectorAll('.ac-item').forEach(el => {
+      el.addEventListener('click', () => {
+        inp.value = el.dataset.name;
+        if (varName === 'a') _vSelA = el.dataset.id; else _vSelB = el.dataset.id;
+        drop.style.display = 'none';
+      });
+    });
+  });
+  inp.addEventListener('blur', () => setTimeout(() => drop.style.display = 'none', 200));
+  inp.addEventListener('focus', () => { if (inp.value) inp.dispatchEvent(new Event('input')); });
 }
-function updEntOpts(sel, tipo) {
-  document.getElementById(sel).innerHTML = '<option value="">-- Seleccionar --</option>' + entidadOpts(tipo);
+
+function _vResetAC(inputId, dropId, varName) {
+  const inp = document.getElementById(inputId);
+  if (inp) { inp.value = ''; }
+  if (varName === 'a') _vSelA = null; else _vSelB = null;
+  const drop = document.getElementById(dropId);
+  if (drop) drop.style.display = 'none';
 }
+
+const _vSubtipos = {
+  familiar: ['padre','madre','hijo/a','hermano/a','primo/a','tio/a','sobrino/a','abuelo/a','cunado/a'],
+  conyugal: ['esposo/a','ex-esposo/a','pareja','ex-pareja'],
+  societario: ['socio','accionista','fundador','director','gerente','testaferro','beneficiario','apoderado'],
+  politico: ['aliado','financista','operador','asesor','candidato','diputado','funcionario'],
+  criminal: ['complice','lavador','narcotraficante','extorsionista','testigo protegido'],
+  mediatico: ['dueno','director','columnista','presentador'],
+  institucional: ['presidente','vocal','comisionado','funcionario']
+};
+
+const _vDescMap = {
+  'padre':['es padre de','es hijo/a de'], 'madre':['es madre de','es hijo/a de'],
+  'hijo/a':['es hijo/a de','es padre/madre de'], 'hermano/a':['es hermano/a de','es hermano/a de'],
+  'primo/a':['es primo/a de','es primo/a de'], 'tio/a':['es tio/a de','es sobrino/a de'],
+  'sobrino/a':['es sobrino/a de','es tio/a de'], 'abuelo/a':['es abuelo/a de','es nieto/a de'],
+  'cunado/a':['es cunado/a de','es cunado/a de'],
+  'esposo/a':['es esposo/a de','es esposo/a de'], 'ex-esposo/a':['es ex-esposo/a de','es ex-esposo/a de'],
+  'pareja':['es pareja de','es pareja de'], 'ex-pareja':['es ex-pareja de','es ex-pareja de'],
+  'socio':['es socio de','es socio de'], 'accionista':['es accionista de','tiene como accionista a'],
+  'fundador':['es fundador de','fue fundada por'], 'director':['es director de','tiene como director a'],
+  'gerente':['es gerente de','tiene como gerente a'], 'testaferro':['es testaferro de','usa como testaferro a'],
+  'beneficiario':['es beneficiario de','tiene como beneficiario a'], 'apoderado':['es apoderado de','tiene como apoderado a'],
+  'aliado':['es aliado de','es aliado de'], 'financista':['es financista de','es financiado por'],
+  'operador':['es operador de','tiene como operador a'], 'asesor':['es asesor de','es asesorado por'],
+  'candidato':['es candidato de','tiene como candidato a'], 'diputado':['es diputado por','tiene como diputado a'],
+  'funcionario':['es funcionario de','tiene como funcionario a'],
+  'complice':['es complice de','es complice de'], 'lavador':['es lavador de','usa como lavador a'],
+  'narcotraficante':['trafica para','tiene como narcotraficante a'],
+  'extorsionista':['extorsiona a','es extorsionado por'], 'testigo protegido':['es testigo contra','tiene como testigo a'],
+  'dueno':['es dueno de','es propiedad de'], 'columnista':['es columnista de','tiene como columnista a'],
+  'presentador':['es presentador de','tiene como presentador a'],
+  'presidente':['es presidente de','tiene como presidente a'], 'vocal':['es vocal de','tiene como vocal a'],
+  'comisionado':['es comisionado de','tiene como comisionado a']
+};
+
+function _vUpdSubtipos() {
+  const tipo = document.getElementById('fv-tipo').value;
+  const sel = document.getElementById('fv-sub');
+  const subs = _vSubtipos[tipo] || [];
+  sel.innerHTML = '<option value="">-- Seleccionar --</option>' +
+    subs.map(s => `<option value="${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('');
+}
+
+function _vAutoDesc() {
+  const sub = document.getElementById('fv-sub').value;
+  const d = _vDescMap[sub];
+  if (d) {
+    document.getElementById('fv-dab').value = d[0];
+    document.getElementById('fv-dba').value = d[1];
+  }
+}
+
 function mAddVinculo(preset) {
   const tipos = ['persona','empresa','grupo','partido','medio','cartel','banco','institucion','zede','caso','investigacion'];
   const tipoOpts = tipos.map(t => `<option value="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
@@ -256,23 +339,32 @@ function mAddVinculo(preset) {
     .map(t => `<option value="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
   const preA = preset ? preset.tipo : 'persona';
   const preAid = preset ? preset.id : '';
+  const preAname = preset ? ((_vGetList(preA).find(x => String(x.id) === String(preAid))||{}).nombre||'') : '';
+  _vSelA = preAid ? String(preAid) : null; _vSelB = null;
   return `<h3>NUEVO VINCULO <button onclick="closeModal()">✕</button></h3>
-  <div class="r2"><div><label>ENTIDAD A — TIPO</label><select id="fv-ta" onchange="updEntOpts('fv-a',this.value)">${tipoOpts}</select></div>
-  <div><label>ENTIDAD A</label><select id="fv-a"><option value="">-- Seleccionar --</option>${entidadOpts(preA)}</select></div></div>
-  <div class="r2"><div><label>ENTIDAD B — TIPO</label><select id="fv-tb" onchange="updEntOpts('fv-b',this.value)">${tipoOpts}</select></div>
-  <div><label>ENTIDAD B</label><select id="fv-b"><option value="">-- Seleccionar --</option></select></div></div>
-  <div class="r2"><div><label>TIPO DE VINCULO</label><select id="fv-tipo">${tipoVincOpts}</select></div>
-  <div><label>SUBTIPO</label><input id="fv-sub" placeholder="ej: accionista, cuñado, testaferro"></div></div>
+  <div class="r2"><div><label>ENTIDAD A — TIPO</label><select id="fv-ta" onchange="_vResetAC('fv-a-inp','fv-a-drop','a')">${tipoOpts}</select></div>
+  <div style="position:relative"><label>ENTIDAD A</label><input id="fv-a-inp" autocomplete="off" placeholder="Buscar..." value="${esc(preAname)}">
+  <div id="fv-a-drop" class="ac-drop" style="display:none"></div></div></div>
+  <div class="r2"><div><label>ENTIDAD B — TIPO</label><select id="fv-tb" onchange="_vResetAC('fv-b-inp','fv-b-drop','b')">${tipoOpts}</select></div>
+  <div style="position:relative"><label>ENTIDAD B</label><input id="fv-b-inp" autocomplete="off" placeholder="Buscar...">
+  <div id="fv-b-drop" class="ac-drop" style="display:none"></div></div></div>
+  <div class="r2"><div><label>TIPO DE VINCULO</label><select id="fv-tipo" onchange="_vUpdSubtipos()">${tipoVincOpts}</select></div>
+  <div><label>SUBTIPO</label><select id="fv-sub" onchange="_vAutoDesc()"><option value="">-- Seleccionar --</option>${(_vSubtipos['familiar']||[]).map(s => `<option value="${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}</select></div></div>
   <label>DESCRIPCION A→B</label><input id="fv-dab" placeholder="ej: es socio de">
   <label>DESCRIPCION B→A</label><input id="fv-dba" placeholder="ej: tiene como socio a">
   <label>FUENTE</label><input id="fv-fuente" placeholder="URL o referencia">
   <label>NOTAS</label><textarea id="fv-notas"></textarea>
   <div class="r2"><div><label>CONFIRMADO</label><select id="fv-conf"><option value="true">Si</option><option value="false">No</option></select></div><div></div></div>
   <button class="sbm" onclick="submitVinculo()">REGISTRAR VINCULO</button><button class="cnc" onclick="closeModal()">Cancelar</button>
-  ${preset?`<script>document.getElementById('fv-ta').value='${preA}';document.getElementById('fv-a').value='${preAid}'<\/script>`:''}`;
+  <script>
+    document.getElementById('fv-ta').value='${preA}';
+    _vInitAC('fv-a-inp','fv-a-drop','fv-ta','a');
+    _vInitAC('fv-b-inp','fv-b-drop','fv-tb','b');
+  <\/script>`;
 }
 async function submitVinculo() {
-  const ta = gv('fv-ta'), aid = gv('fv-a'), tb = gv('fv-tb'), bid = gv('fv-b');
+  const ta = gv('fv-ta'), tb = gv('fv-tb');
+  const aid = _vSelA, bid = _vSelB;
   if (!aid || !bid) { alert('Selecciona ambas entidades'); return; }
   const row = {
     entidad_a_tipo: ta, entidad_a_id: parseInt(aid)||aid,
