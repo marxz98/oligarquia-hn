@@ -14,7 +14,7 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 
 function mLogin() {
   return `<div style="text-align:center">
-    <div style="font-size:28px;margin-bottom:4px">🔒</div><h3 style="justify-content:center">ACCESO RESTRINGIDO</h3>
+    <div style="font-size:28px;margin-bottom:4px">${ICONS.lock}</div><h3 style="justify-content:center">ACCESO RESTRINGIDO</h3>
     <div id="lerr" class="hidden" style="color:var(--red);font-size:10px;margin-bottom:6px"></div>
     <input id="lu" type="email" placeholder="Email"><input id="lp" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="sbm" onclick="doLogin()">INGRESAR</button><button class="cnc" onclick="closeModal()">Cancelar</button></div>`;

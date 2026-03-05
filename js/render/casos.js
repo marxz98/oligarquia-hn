@@ -1,8 +1,13 @@
 // ═══ RENDER — Casos Judiciales ═══
 function rCasos(c) {
-  const estadoColor = {'Indultado':'#f59e0b','Cumplida':'#10b981','En curso':'#3b82f6','Cooperantes DEA':'#8b5cf6','Sentenciado':'#ef4444','Prófugo':'#dc2626'};
+  const estadoColor = {'Indultado':'#f59e0b','Cumplida':'#10b981','En curso':'#3b82f6','Cooperantes DEA':'#8b5cf6','Sentenciado':'#ef4444','Profugo':'#dc2626'};
+  if (!DB.casos.length) {
+    c.innerHTML = `<div class="sh"><div><h2>Casos Judiciales</h2></div></div>
+      ${emptyState(ICONS.scale, 'NO HAY CASOS DOCUMENTADOS', 'No se encontraron casos judiciales en la base de datos.')}`;
+    return;
+  }
   c.innerHTML = `<div class="sh"><div><h2>Casos Judiciales</h2>
-    <p>${DB.casos.length} casos documentados — narcotráfico, lavado, ISDS</p></div></div>
+    <p>${DB.casos.length} casos documentados — narcotrafico, lavado, ISDS</p></div></div>
     <div class="grid g2">${DB.casos.map(cj => {
       const ec = estadoColor[cj.estado]||'#6b7280';
       return `<div class="card" onclick="nav('cj-det',${cj.id})" style="border-left:3px solid ${ec}">
@@ -32,6 +37,6 @@ function rCjDet(c, id) {
         ${cj.fecha_sentencia?`<span class="b b-po">${esc(cj.fecha_sentencia)}</span>`:''}
       </div></div>
     </div>
-    ${cj.descripcion?`<div class="ds"><h4>DESCRIPCIÓN</h4><div class="df al">${esc(cj.descripcion)}</div></div>`:''}
-    ${cj.notas?`<div class="ds"><h4>⚠ NOTAS IMPORTANTES</h4><div class="df wa">${esc(cj.notas)}</div></div>`:''}`;
+    ${cj.descripcion?`<div class="ds"><h4>DESCRIPCION</h4><div class="df al">${esc(cj.descripcion)}</div></div>`:''}
+    ${cj.notas?`<div class="ds"><h4>${ICONS.alert} NOTAS IMPORTANTES</h4><div class="df wa">${esc(cj.notas)}</div></div>`:''}`;
 }

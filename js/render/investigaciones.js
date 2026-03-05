@@ -1,5 +1,10 @@
 // ═══ RENDER — Investigaciones Internacionales ═══
 function rInvestigaciones(c) {
+  if (!DB.investigaciones.length) {
+    c.innerHTML = `<div class="sh"><div><h2>Investigaciones Internacionales</h2></div></div>
+      ${emptyState(ICONS.search, 'NO HAY INVESTIGACIONES', 'No se encontraron investigaciones internacionales en la base de datos.')}`;
+    return;
+  }
   c.innerHTML = `<div class="sh"><div><h2>Investigaciones Internacionales</h2>
     <p>Archivos desclasificados y filtraciones que mencionan Honduras</p></div></div>
     <div class="grid g2">${DB.investigaciones.map(inv => `
@@ -28,7 +33,7 @@ function rInvDet(c, id) {
       </div></div>
     </div>
     ${inv.resumen?`<div class="ds"><h4>RESUMEN</h4><div class="df">${esc(inv.resumen)}</div></div>`:''}
-    ${inv.datos_clave?`<div class="ds"><h4>🔍 DATOS CLAVE SOBRE HONDURAS</h4><div class="df dg">${esc(inv.datos_clave)}</div></div>`:''}
+    ${inv.datos_clave?`<div class="ds"><h4>${ICONS.search} DATOS CLAVE SOBRE HONDURAS</h4><div class="df dg">${esc(inv.datos_clave)}</div></div>`:''}
     ${inv.url_fuente?`<div class="ds"><h4>FUENTE ORIGINAL</h4><div class="df inf"><a href="${esc(inv.url_fuente)}" target="_blank" style="color:var(--blu);word-break:break-all">${esc(inv.url_fuente)}</a></div></div>`:''}
     ${inv.notas?`<div class="ds"><h4>NOTAS</h4><div class="df">${esc(inv.notas)}</div></div>`:''}`;
 }

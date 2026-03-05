@@ -1,7 +1,12 @@
 // ═══ RENDER — Instituciones ═══
 function rInstituciones(c) {
+  if (!DB.instituciones.length) {
+    c.innerHTML = `<div class="sh"><div><h2>Instituciones</h2></div></div>
+      ${emptyState(ICONS.institution, 'NO HAY INSTITUCIONES', 'No se encontraron instituciones documentadas en la base de datos.')}`;
+    return;
+  }
   c.innerHTML = `<div class="sh"><div><h2>Instituciones</h2>
-    <p>Cámaras, asociaciones y gremios — puentes de poder oligárquico</p></div></div>
+    <p>Camaras, asociaciones y gremios — puentes de poder oligarquico</p></div></div>
     <div class="grid g2">${DB.instituciones.map(i => `
       <div class="card" onclick="nav('i-det',${i.id})" style="border-left:3px solid var(--grn)">
         <div class="pcard">${av(i.siglas||i.nombre,'#10b981',54)}
@@ -19,5 +24,5 @@ function rIDet(c, id) {
       <div style="flex:1"><div class="phn">${esc(inst.nombre)}</div>
       <div class="psub">${esc(inst.siglas||'')}</div></div>
     </div>
-    ${inst.descripcion?`<div class="ds"><h4>DESCRIPCIÓN</h4><div class="df">${esc(inst.descripcion)}</div></div>`:''}`;
+    ${inst.descripcion?`<div class="ds"><h4>DESCRIPCION</h4><div class="df">${esc(inst.descripcion)}</div></div>`:''}`;
 }

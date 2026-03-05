@@ -1,10 +1,16 @@
 // ═══ RENDER — ZEDEs ═══
 function rZedes(c) {
-  c.innerHTML = `<div class="sh"><div><h2>Zonas de Empleo y Desarrollo Económico</h2><p>Soberanía comprometida — ${DB.zedes.length} ZEDEs documentadas</p></div></div>
+  console.log('[rZedes] llamado, DB.zedes:', DB.zedes.length, DB.zedes);
+  if (!DB.zedes.length) {
+    c.innerHTML = `<div class="sh"><div><h2>Zonas de Empleo y Desarrollo Economico</h2></div></div>
+      ${emptyState(ICONS.construction, 'NO HAY ZEDEs DOCUMENTADAS', 'Las Zonas de Empleo y Desarrollo no tienen registros en la base de datos.')}`;
+    return;
+  }
+  c.innerHTML = `<div class="sh"><div><h2>Zonas de Empleo y Desarrollo Economico</h2><p>Soberania comprometida — ${DB.zedes.length} ZEDEs documentadas</p></div></div>
     <div class="note" style="background:var(--s2);border-left:3px solid var(--red);padding:14px 18px;border-radius:0 6px 6px 0;margin-bottom:16px;font-size:12px;line-height:1.7;color:var(--t2)">
-      <strong style="color:var(--red)">⚠ Contexto:</strong> Las ZEDEs fueron creadas en 2013 bajo Juan Orlando Hernández (hoy condenado por narcotráfico e indultado por Trump). 
-      Permiten a empresas privadas crear jurisdicciones semi-autónomas con sus propias leyes, impuestos y tribunales. 
-      Derogadas por Xiomara Castro en 2022, pero siguen operando. Próspera demandó a Honduras por $10.7 mil millones ante el CIADI.
+      <strong style="color:var(--red)">${ICONS.alert} Contexto:</strong> Las ZEDEs fueron creadas en 2013 bajo Juan Orlando Hernandez (hoy condenado por narcotrafico e indultado por Trump).
+      Permiten a empresas privadas crear jurisdicciones semi-autonomas con sus propias leyes, impuestos y tribunales.
+      Derogadas por Xiomara Castro en 2022, pero siguen operando. Prospera demando a Honduras por $10.7 mil millones ante el CIADI.
     </div>
     <div class="grid g2">${DB.zedes.map(z => `
       <div class="card" onclick="nav('z-det',${z.id})" style="border-left:3px solid var(--red)">
@@ -18,7 +24,7 @@ function rZedes(c) {
               ${z.monto_demanda_usd?`<span class="b" style="background:#f59e0b15;color:var(--amb);border-color:#f59e0b30">DEMANDA $${(z.monto_demanda_usd/1000000000).toFixed(1)}B</span>`:''}
             </div>
             <div class="pdesc" style="margin-top:4px">${esc(z.descripcion||'')}</div>
-            ${z.inversionistas?`<div style="font-size:9px;color:var(--pur);margin-top:4px">💰 ${esc(z.inversionistas)}</div>`:''}
+            ${z.inversionistas?`<div style="font-size:9px;color:var(--pur);margin-top:4px">${ICONS.money} ${esc(z.inversionistas)}</div>`:''}
           </div>
         </div>
       </div>`).join('')}
@@ -40,8 +46,8 @@ function rZDet(c, id) {
       </div>
     </div>
     ${z.empresa_operadora?`<div class="ds"><h4>EMPRESA OPERADORA</h4><div class="df">${esc(z.empresa_operadora)}${z.ceo?' — CEO: '+esc(z.ceo):''}</div></div>`:''}
-    ${z.descripcion?`<div class="ds"><h4>DESCRIPCIÓN</h4><div class="df">${esc(z.descripcion)}</div></div>`:''}
-    ${z.inversionistas?`<div class="ds"><h4>💰 INVERSIONISTAS</h4><div class="df dg">${esc(z.inversionistas)}</div></div>`:''}
-    ${z.marco_legal?`<div class="ds"><h4>⚖ MARCO LEGAL</h4><div class="df wa">${esc(z.marco_legal)}</div></div>`:''}
+    ${z.descripcion?`<div class="ds"><h4>DESCRIPCION</h4><div class="df">${esc(z.descripcion)}</div></div>`:''}
+    ${z.inversionistas?`<div class="ds"><h4>${ICONS.money} INVERSIONISTAS</h4><div class="df dg">${esc(z.inversionistas)}</div></div>`:''}
+    ${z.marco_legal?`<div class="ds"><h4>${ICONS.scale} MARCO LEGAL</h4><div class="df wa">${esc(z.marco_legal)}</div></div>`:''}
     ${z.notas?`<div class="ds"><h4>NOTAS</h4><div class="df">${esc(z.notas)}</div></div>`:''}`;
 }

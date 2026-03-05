@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OLIGARQUÍA HN — Radiografía del Poder en Honduras</title>
-  <meta name="description" content="Investigación ciudadana: familias oligárquicas, empresas, vínculos políticos, medios de comunicación y crimen organizado en Honduras.">
+  <title>OLIGARQUIA HN — Radiografia del Poder en Honduras</title>
+  <meta name="description" content="Investigacion ciudadana: familias oligarquicas, empresas, vinculos politicos, medios de comunicacion y crimen organizado en Honduras.">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
@@ -15,6 +15,9 @@
   <!-- Supabase client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
+  <!-- Icons -->
+  <script src="js/icons.js"></script>
+
   <!-- Styles -->
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="css/main.css">
@@ -22,59 +25,59 @@
 <body>
 
   <!-- Mobile menu toggle -->
-  <button class="mob-tog" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+  <button class="mob-tog" onclick="document.querySelector('.sidebar').classList.toggle('open')"><script>document.write(ICONS.menu)</script></button>
 
   <div id="app">
     <!-- ═══ SIDEBAR ═══ -->
     <nav class="sidebar" id="sidebar">
       <div class="sb-logo">
-        <h1>OLIGARQUÍA<em>HN</em></h1>
-        <p>RADIOGRAFÍA DEL PODER</p>
+        <h1>OLIGARQUIA<em>HN</em></h1>
+        <p>RADIOGRAFIA DEL PODER</p>
       </div>
 
       <div class="sb-nav">
         <div class="sb-section">
-          <div class="sb-section-label">INVESTIGACIÓN</div>
-          <div class="sb-item active" data-pg="dashboard"><span class="ic">◉</span><span class="lb">Dashboard</span></div>
-          <div class="sb-item" data-pg="red"><span class="ic">◎</span><span class="lb">Red de Poder</span></div>
+          <div class="sb-section-label">INVESTIGACION</div>
+          <div class="sb-item active" data-pg="dashboard"><span class="ic"><script>document.write(ICONS.dashboard)</script></span><span class="lb">Dashboard</span></div>
+          <div class="sb-item" data-pg="red"><span class="ic"><script>document.write(ICONS.network)</script></span><span class="lb">Red de Poder</span></div>
         </div>
 
         <div class="sb-section">
           <div class="sb-section-label">PERFILES</div>
-          <div class="sb-item" data-pg="personas"><span class="ic">👤</span><span class="lb">Personas</span><span class="ct" id="c-p"></span></div>
-          <div class="sb-item" data-pg="grupos"><span class="ic">👥</span><span class="lb">Grupos Familiares</span><span class="ct" id="c-g"></span></div>
-          <div class="sb-item" data-pg="empresas"><span class="ic">🏢</span><span class="lb">Empresas</span><span class="ct" id="c-e"></span></div>
+          <div class="sb-item" data-pg="personas"><span class="ic"><script>document.write(ICONS.user)</script></span><span class="lb">Personas</span><span class="ct" id="c-p"></span></div>
+          <div class="sb-item" data-pg="grupos"><span class="ic"><script>document.write(ICONS.users)</script></span><span class="lb">Grupos Familiares</span><span class="ct" id="c-g"></span></div>
+          <div class="sb-item" data-pg="empresas"><span class="ic"><script>document.write(ICONS.building)</script></span><span class="lb">Empresas</span><span class="ct" id="c-e"></span></div>
         </div>
 
         <div class="sb-section">
           <div class="sb-section-label">PODER E INFLUENCIA</div>
-          <div class="sb-item" data-pg="partidos"><span class="ic">🏛</span><span class="lb">Partidos Políticos</span><span class="ct" id="c-pt"></span></div>
-          <div class="sb-item" data-pg="medios"><span class="ic">📺</span><span class="lb">Medios</span><span class="ct" id="c-m"></span></div>
-          <div class="sb-item" data-pg="bancos"><span class="ic">🏦</span><span class="lb">Bancos</span><span class="ct" id="c-b"></span></div>
-          <div class="sb-item" data-pg="instituciones"><span class="ic">🏢</span><span class="lb">Instituciones</span><span class="ct" id="c-i"></span></div>
+          <div class="sb-item" data-pg="partidos"><span class="ic"><script>document.write(ICONS.capitol)</script></span><span class="lb">Partidos Politicos</span><span class="ct" id="c-pt"></span></div>
+          <div class="sb-item" data-pg="medios"><span class="ic"><script>document.write(ICONS.tv)</script></span><span class="lb">Medios</span><span class="ct" id="c-m"></span></div>
+          <div class="sb-item" data-pg="bancos"><span class="ic"><script>document.write(ICONS.bank)</script></span><span class="lb">Bancos</span><span class="ct" id="c-b"></span></div>
+          <div class="sb-item" data-pg="instituciones"><span class="ic"><script>document.write(ICONS.institution)</script></span><span class="lb">Instituciones</span><span class="ct" id="c-i"></span></div>
         </div>
 
         <div class="sb-section">
           <div class="sb-section-label">CRIMEN ORGANIZADO</div>
-          <div class="sb-item" data-pg="carteles"><span class="ic">⚠</span><span class="lb">Carteles / Narco</span><span class="ct" id="c-c"></span></div>
+          <div class="sb-item" data-pg="carteles"><span class="ic"><script>document.write(ICONS.alert)</script></span><span class="lb">Carteles / Narco</span><span class="ct" id="c-c"></span></div>
         </div>
 
         <div class="sb-section">
-          <div class="sb-section-label">SOBERANÍA</div>
-          <div class="sb-item" data-pg="zedes"><span class="ic">🏗</span><span class="lb">ZEDEs</span><span class="ct" id="c-z"></span></div>
+          <div class="sb-section-label">SOBERANIA</div>
+          <div class="sb-item" data-pg="zedes"><span class="ic"><script>document.write(ICONS.construction)</script></span><span class="lb">ZEDEs</span><span class="ct" id="c-z"></span></div>
         </div>
 
         <div class="sb-section">
           <div class="sb-section-label">JUSTICIA</div>
-          <div class="sb-item" data-pg="casos"><span class="ic">⚖</span><span class="lb">Casos Judiciales</span><span class="ct" id="c-cj"></span></div>
-          <div class="sb-item" data-pg="investigaciones"><span class="ic">🔍</span><span class="lb">Investigaciones</span><span class="ct" id="c-inv"></span></div>
+          <div class="sb-item" data-pg="casos"><span class="ic"><script>document.write(ICONS.scale)</script></span><span class="lb">Casos Judiciales</span><span class="ct" id="c-cj"></span></div>
+          <div class="sb-item" data-pg="investigaciones"><span class="ic"><script>document.write(ICONS.search)</script></span><span class="lb">Investigaciones</span><span class="ct" id="c-inv"></span></div>
         </div>
       </div>
 
       <div class="sb-ft">
-        <button class="sb-btn" id="theme-toggle" onclick="toggleTheme()" style="display:flex;align-items:center;justify-content:center;gap:6px">🌙 Modo Oscuro</button>
-        <button class="sb-btn" id="bl" onclick="showModal('login')">🔒 Iniciar Sesión</button>
-        <button class="sb-btn admin-on hidden" id="blo" onclick="doLogout()">● Cerrar Sesión Admin</button>
+        <button class="sb-btn" id="theme-toggle" onclick="toggleTheme()" style="display:flex;align-items:center;justify-content:center;gap:6px"><script>document.write(ICONS.moon)</script> Modo Oscuro</button>
+        <button class="sb-btn" id="bl" onclick="showModal('login')" style="display:flex;align-items:center;justify-content:center;gap:6px"><script>document.write(ICONS.lock)</script> Iniciar Sesion</button>
+        <button class="sb-btn admin-on hidden" id="blo" onclick="doLogout()">● Cerrar Sesion Admin</button>
       </div>
     </nav>
 
@@ -82,6 +85,7 @@
     <div class="main-area">
       <div class="topbar">
         <div class="srch">
+          <span class="srch-icon"><script>document.write(ICONS.search)</script></span>
           <input id="search" placeholder="Buscar personas, empresas, grupos, medios..." oninput="doSearch()">
         </div>
         <div class="tst"><div class="tst-v" style="color:var(--red)" id="ts-p"></div><div class="tst-l">PERSONAS</div></div>
