@@ -6,7 +6,8 @@ function showModal(type, data) {
   const body = document.getElementById('modal-body');
   const G = { login:mLogin, addPersona:mAddPersona, editPersona:mEditPersona,
     addGrupo:mAddGrupo, editGrupo:mEditGrupo, addEmpresa:mAddEmpresa, editEmpresa:mEditEmpresa,
-    addMedio:mAddMedio, editMedio:mEditMedio, addCartel:mAddCartel, editCartel:mEditCartel };
+    addMedio:mAddMedio, editMedio:mEditMedio, addCartel:mAddCartel, editCartel:mEditCartel,
+    addVinculo:mAddVinculo };
   if (G[type]) body.innerHTML = G[type](data);
   document.getElementById('modal').classList.add('open');
 }
@@ -235,4 +236,52 @@ async function delCartel(id) {
   const { error } = await sb.from('carteles').delete().eq('id',id);
   if (error) { alert('Error: '+error.message); return; }
   DB.carteles = DB.carteles.filter(x => x.id!==id); updCounts(); closeModal(); nav('carteles');
+}
+
+// ═══ VINCULO ═══
+function entidadOpts(tipo) {
+  const map = { persona:DB.personas, empresa:DB.empresas, grupo:DB.grupos, partido:DB.partidos,
+    medio:DB.medios, cartel:DB.carteles, banco:DB.bancos, institucion:DB.instituciones,
+    zede:DB.zedes, caso:DB.casos, investigacion:DB.investigaciones };
+  const arr = map[tipo] || [];
+  return arr.map(x => `<option value="${x.id}">${esc(x.nombre)}</option>`).join('');
+}
+function updEntOpts(sel, tipo) {
+  document.getElementById(sel).innerHTML = '<option value="">-- Seleccionar --</option>' + entidadOpts(tipo);
+}
+function mAddVinculo(preset) {
+  const tipos = ['persona','empresa','grupo','partido','medio','cartel','banco','institucion','zede','caso','investigacion'];
+  const tipoOpts = tipos.map(t => `<option value="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
+  const tipoVincOpts = ['familiar','conyugal','societario','politico','criminal','mediatico','institucional']
+    .map(t => `<option value="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
+  const preA = preset ? preset.tipo : 'persona';
+  const preAid = preset ? preset.id : '';
+  return `<h3>NUEVO VINCULO <button onclick="closeModal()">✕</button></h3>
+  <div class="r2"><div><label>ENTIDAD A — TIPO</label><select id="fv-ta" onchange="updEntOpts('fv-a',this.value)">${tipoOpts}</select></div>
+  <div><label>ENTIDAD A</label><select id="fv-a"><option value="">-- Seleccionar --</option>${entidadOpts(preA)}</select></div></div>
+  <div class="r2"><div><label>ENTIDAD B — TIPO</label><select id="fv-tb" onchange="updEntOpts('fv-b',this.value)">${tipoOpts}</select></div>
+  <div><label>ENTIDAD B</label><select id="fv-b"><option value="">-- Seleccionar --</option></select></div></div>
+  <div class="r2"><div><label>TIPO DE VINCULO</label><select id="fv-tipo">${tipoVincOpts}</select></div>
+  <div><label>SUBTIPO</label><input id="fv-sub" placeholder="ej: accionista, cuñado, testaferro"></div></div>
+  <label>DESCRIPCION A→B</label><input id="fv-dab" placeholder="ej: es socio de">
+  <label>DESCRIPCION B→A</label><input id="fv-dba" placeholder="ej: tiene como socio a">
+  <label>FUENTE</label><input id="fv-fuente" placeholder="URL o referencia">
+  <label>NOTAS</label><textarea id="fv-notas"></textarea>
+  <div class="r2"><div><label>CONFIRMADO</label><select id="fv-conf"><option value="true">Si</option><option value="false">No</option></select></div><div></div></div>
+  <button class="sbm" onclick="submitVinculo()">REGISTRAR VINCULO</button><button class="cnc" onclick="closeModal()">Cancelar</button>
+  ${preset?`<script>document.getElementById('fv-ta').value='${preA}';document.getElementById('fv-a').value='${preAid}'<\/script>`:''}`;
+}
+async function submitVinculo() {
+  const ta = gv('fv-ta'), aid = gv('fv-a'), tb = gv('fv-tb'), bid = gv('fv-b');
+  if (!aid || !bid) { alert('Selecciona ambas entidades'); return; }
+  const row = {
+    entidad_a_tipo: ta, entidad_a_id: parseInt(aid)||aid,
+    entidad_b_tipo: tb, entidad_b_id: parseInt(bid)||bid,
+    tipo_vinculo: gv('fv-tipo'), subtipo: gv('fv-sub')||null, descripcion_ab: gv('fv-dab')||null,
+    descripcion_ba: gv('fv-dba')||null, fuente: gv('fv-fuente')||null,
+    notas: gv('fv-notas')||null, confirmado: gv('fv-conf')==='true'
+  };
+  const { data, error } = await sb.from('vinculos').insert(row).select().single();
+  if (error) { alert('Error: '+error.message); return; }
+  DB.vinculos.push(data); closeModal(); nav(page, pageId);
 }

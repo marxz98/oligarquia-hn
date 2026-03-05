@@ -19,10 +19,11 @@ function rInstituciones(c) {
 function rIDet(c, id) {
   const inst = DB.instituciones.find(x => x.id === id); if (!inst) return;
   c.innerHTML = `<div class="pbk" onclick="nav('instituciones')">← Instituciones</div>
-    <div class="phero" style="border-left:4px solid var(--grn)">
+    <div class="phero" style="border-left:4px solid var(--grn)"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'institucion',id:${inst.id}})">+ VINCULO</button>
       ${av(inst.siglas||inst.nombre,'#10b981',84)}
       <div style="flex:1"><div class="phn">${esc(inst.nombre)}</div>
       <div class="psub">${esc(inst.siglas||'')}</div></div>
     </div>
+    ${renderVinculos('institucion', inst.id)}
     ${inst.descripcion?`<div class="ds"><h4>DESCRIPCION</h4><div class="df">${esc(inst.descripcion)}</div></div>`:''}`;
 }

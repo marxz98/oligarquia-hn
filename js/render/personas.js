@@ -29,7 +29,7 @@ function rPDet(c, id) {
   const fam = DB.personas.filter(x => x.id!==p.id && x.grupo===p.grupo && p.grupo);
   const emps = DB.empresas.filter(e => e.grupoId===p.grupoId);
   c.innerHTML = `<div class="pbk" onclick="nav('personas')">← Personas</div>
-    <div class="phero"><button class="ed-btn" onclick="showModal('editPersona',${p.id})">✏ EDITAR</button>
+    <div class="phero"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'persona',id:${p.id}})">+ VINCULO</button><button class="ed-btn" onclick="showModal('editPersona',${p.id})">✏ EDITAR</button>
     ${av(p.nombre,co,84)}<div style="flex:1"><div class="phn">${esc(p.nombre)}</div>
     <div class="psub" style="color:${co}">${esc(p.grupo||'')} · ${esc(p.estado||'')}</div>
     ${p.dni?`<div style="font-size:10px;color:var(--t4);margin-top:3px">DNI: ${esc(p.dni)}</div>`:''}
@@ -38,6 +38,7 @@ function rPDet(c, id) {
     ${p.rol?`<div class="ds"><h4>ROL</h4><div class="df">${esc(p.rol)}</div></div>`:''}
     ${p.golpe2009?`<div class="ds"><h4>${ICONS.alert} GOLPE 2009</h4><div class="df wa">${esc(p.golpe2009)}</div></div>`:''}
     ${p.alertasLegales?`<div class="ds"><h4>${ICONS.siren} ALERTAS LEGALES</h4><div class="df al">${esc(p.alertasLegales)}</div></div>`:''}
+    ${renderVinculos('persona', p.id)}
     ${p.notas?`<div class="ds"><h4>NOTAS</h4><div class="df">${esc(p.notas)}</div></div>`:''}
     ${emps.length?`<div class="ds"><h4>EMPRESAS DEL GRUPO (${emps.length})</h4><div class="rgrid">${emps.slice(0,20).map(e =>
       `<div class="ri" onclick="nav('e-det',${e.id})">${esc(e.nombre)}<small>${esc(e.actividadEconomica||'')}</small></div>`).join('')}</div></div>`:''}

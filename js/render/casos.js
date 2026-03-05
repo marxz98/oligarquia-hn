@@ -27,7 +27,7 @@ function rCjDet(c, id) {
   const estadoColor = {'Indultado':'#f59e0b','Cumplida':'#10b981','En curso':'#3b82f6','Cooperantes DEA':'#8b5cf6','Sentenciado':'#ef4444'};
   const ec = estadoColor[cj.estado]||'#6b7280';
   c.innerHTML = `<div class="pbk" onclick="nav('casos')">← Casos Judiciales</div>
-    <div class="phero" style="border-left:4px solid ${ec}">
+    <div class="phero" style="border-left:4px solid ${ec}"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'caso',id:${cj.id}})">+ VINCULO</button>
       ${av(cj.nombre,ec,84)}
       <div style="flex:1"><div class="phn">${esc(cj.nombre)}</div>
       <div class="psub">${esc(cj.tribunal||'')} · ${esc(cj.pais||'')}</div>
@@ -38,5 +38,6 @@ function rCjDet(c, id) {
       </div></div>
     </div>
     ${cj.descripcion?`<div class="ds"><h4>DESCRIPCION</h4><div class="df al">${esc(cj.descripcion)}</div></div>`:''}
+    ${renderVinculos('caso', cj.id)}
     ${cj.notas?`<div class="ds"><h4>${ICONS.alert} NOTAS IMPORTANTES</h4><div class="df wa">${esc(cj.notas)}</div></div>`:''}`;
 }

@@ -28,13 +28,51 @@ function bHTML(p) {
 function nid(arr, key='id') { return Math.max(0, ...arr.map(x => typeof x[key]==='number' ? x[key] : 0)) + 1; }
 function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
 
+function renderVinculos(tipo, id) {
+  const vincs = getVinculos(tipo, id);
+  if (!vincs.length) return '';
+
+  const grupos = {};
+  vincs.forEach(v => {
+    if (!grupos[v.tipo_vinculo]) grupos[v.tipo_vinculo] = [];
+    grupos[v.tipo_vinculo].push(v);
+  });
+
+  const tipoLabels = {
+    familiar: 'FAMILIARES', conyugal: 'VINCULOS CONYUGALES',
+    societario: 'VINCULOS SOCIETARIOS', politico: 'VINCULOS POLITICOS',
+    criminal: 'VINCULOS CRIMINALES', mediatico: 'VINCULOS MEDIATICOS',
+    institucional: 'VINCULOS INSTITUCIONALES'
+  };
+
+  const tipoColors = {
+    familiar: 'var(--pink)', conyugal: 'var(--pink)',
+    societario: 'var(--amb)', politico: 'var(--blu)',
+    criminal: 'var(--pur)', mediatico: 'var(--cyan)',
+    institucional: 'var(--grn)'
+  };
+
+  let html = '';
+  for (const [tipo_v, items] of Object.entries(grupos)) {
+    const color = tipoColors[tipo_v] || 'var(--t3)';
+    html += `<div class="ds"><h4 style="color:${color};border-color:${color}30">${ICONS.network} ${tipoLabels[tipo_v] || tipo_v.toUpperCase()}</h4>
+      <div class="rgrid">${items.map(v => {
+        const nombre = resolveVinculoNombre(v.entidadTipo, v.entidadId);
+        return `<div class="ri" onclick="navToEntidad('${v.entidadTipo}',${v.entidadId})" style="border-left:2px solid ${color}40">
+          <div style="font-size:12px;color:var(--t1)">${esc(nombre)}</div>
+          <small style="color:${color}">${esc(v.relacion || v.subtipo || v.tipo_vinculo)}</small>
+          ${v.notas ? `<small style="color:var(--t4);display:block;margin-top:2px">${esc(v.notas)}</small>` : ''}
+          ${!v.es_confirmado ? `<small style="color:var(--amb)">${ICONS.alert} No confirmado</small>` : ''}
+        </div>`;
+      }).join('')}</div></div>`;
+  }
+  return html;
+}
+
 function updCounts() {
   const s = (id,v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
   s('c-p', DB.personas.length); s('c-g', DB.grupos.length); s('c-e', DB.empresas.length);
   s('c-pt', DB.partidos.length); s('c-m', DB.medios.length); s('c-c', DB.carteles.length);
   s('c-b', DB.bancos.length); s('c-i', DB.instituciones.length);
   s('c-z', DB.zedes.length); s('c-cj', DB.casos.length); s('c-inv', DB.investigaciones.length);
-  s('ts-p', DB.personas.length); s('ts-e', DB.empresas.length);
-  s('ts-n', DB.personas.filter(p => p.alertasLegales).length);
-  s('ts-a', DB.personas.filter(p => p.alertasLegales).length);
 }

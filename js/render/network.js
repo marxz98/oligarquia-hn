@@ -83,6 +83,48 @@ function bNet() {
     }
   });
 
+  // ── Links from vinculos table ──
+  DB.vinculos.forEach(v => {
+    function getNodeId(tipo, id) {
+      if (tipo === 'persona') {
+        const p = DB.personas.find(x => x.id === id);
+        return p && p.grupo ? 'g:' + p.grupo : null;
+      }
+      if (tipo === 'partido') return 'p:' + id;
+      if (tipo === 'cartel') return 'c:' + id;
+      if (tipo === 'medio') return 'm:' + id;
+      if (tipo === 'empresa') {
+        const e = DB.empresas.find(x => x.id === id);
+        return e && e.grupoControlador ? 'g:' + e.grupoControlador : null;
+      }
+      if (tipo === 'grupo') {
+        const g = DB.grupos.find(x => x.id === id);
+        return g ? 'g:' + g.nombre : null;
+      }
+      return null;
+    }
+
+    const sourceId = getNodeId(v.entidad_a_tipo, v.entidad_a_id);
+    const targetId = getNodeId(v.entidad_b_tipo, v.entidad_b_id);
+
+    if (sourceId && targetId && sourceId !== targetId) {
+      if (!links.find(l =>
+        (l.source === sourceId && l.target === targetId) ||
+        (l.source === targetId && l.target === sourceId)
+      )) {
+        const typeMap = {
+          Familiar: 'fam', Conyugal: 'fam', Empresarial: 'emp',
+          Politico: 'pol', Criminal: 'nar', Mediatico: 'med',
+          Institucional: 'pol', Financiero: 'emp', Legal: 'pol', Otro: 'emp'
+        };
+        links.push({
+          source: sourceId, target: targetId,
+          weight: 2, type: typeMap[v.tipo_vinculo] || 'emp'
+        });
+      }
+    }
+  });
+
   // ── SVG setup ──
   const defs = svg.append('defs');
   const glow = defs.append('filter').attr('id', 'glow');
@@ -102,7 +144,7 @@ function bNet() {
     .force('center', d3.forceCenter(w / 2, h / 2))
     .force('collision', d3.forceCollide().radius(d => d.size + 8));
 
-  const lc = { pol: '#3b82f620', nar: '#8b5cf630', med: '#06b6d420', emp: '#ffffff10' };
+  const lc = { pol: '#3b82f620', nar: '#8b5cf630', med: '#06b6d420', emp: '#ffffff10', fam: '#ec489920' };
   const link = g.append('g').selectAll('line').data(links).enter().append('line')
     .attr('stroke', d => lc[d.type] || '#ffffff10')
     .attr('stroke-width', d => Math.max(1, d.weight * 0.7));

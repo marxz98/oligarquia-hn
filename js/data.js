@@ -6,7 +6,7 @@ const DB = {
   personas: [], grupos: [], empresas: [], partidos: [],
   medios: [], carteles: [], instituciones: [], bancos: [],
   zedes: [], investigaciones: [], casos: [], categorias: [],
-  datosGrupo: [], exoneraciones: []
+  datosGrupo: [], exoneraciones: [], vinculos: []
 };
 
 function mapPersona(r) {
@@ -116,11 +116,55 @@ async function loadAllData() {
     DB.instituciones = (instituciones.data || []);
     DB.bancos = (bancos.data || []);
 
+    const [vinculos_res] = await Promise.all([
+      sb.from('vinculos').select('*')
+    ]);
+    DB.vinculos = vinculos_res.data || [];
+
     resolveRelations();
-    console.log(`[DB] Cargado: ${DB.personas.length} personas, ${DB.grupos.length} grupos, ${DB.empresas.length} empresas, ${DB.zedes.length} zedes, ${DB.casos.length} casos`);
+    console.log(`[DB] Cargado: ${DB.personas.length} personas, ${DB.grupos.length} grupos, ${DB.empresas.length} empresas, ${DB.zedes.length} zedes, ${DB.casos.length} casos, ${DB.vinculos.length} vinculos`);
     return true;
   } catch (error) {
     console.error('[DB] Error:', error);
     return false;
   }
+}
+
+function getVinculos(tipo, id) {
+  return DB.vinculos.filter(v =>
+    (v.entidad_a_tipo === tipo && v.entidad_a_id === id) ||
+    (v.entidad_b_tipo === tipo && v.entidad_b_id === id)
+  ).map(v => {
+    const esA = v.entidad_a_tipo === tipo && v.entidad_a_id === id;
+    return {
+      ...v,
+      entidadTipo: esA ? v.entidad_b_tipo : v.entidad_a_tipo,
+      entidadId: esA ? v.entidad_b_id : v.entidad_a_id,
+      relacion: esA ? v.descripcion_ab : v.descripcion_ba,
+      direccion: esA ? 'saliente' : 'entrante'
+    };
+  });
+}
+
+function resolveVinculoNombre(tipo, id) {
+  const map = {
+    persona: () => { const x = DB.personas.find(p => p.id === id); return x ? x.nombre : '?'; },
+    empresa: () => { const x = DB.empresas.find(e => e.id === id); return x ? x.nombre : '?'; },
+    partido: () => { const x = DB.partidos.find(p => p.id === id); return x ? x.nombre : '?'; },
+    medio: () => { const x = DB.medios.find(m => m.id === id); return x ? x.nombre : '?'; },
+    cartel: () => { const x = DB.carteles.find(c => c.id === id); return x ? x.nombre : '?'; },
+    banco: () => { const x = DB.bancos.find(b => b.id === id); return x ? x.nombre : '?'; },
+    institucion: () => { const x = DB.instituciones.find(i => i.id === id); return x ? x.nombre : '?'; },
+    zede: () => { const x = DB.zedes.find(z => z.id === id); return x ? z.nombre : '?'; },
+  };
+  return (map[tipo] || (() => '?'))();
+}
+
+function navToEntidad(tipo, id) {
+  const routes = {
+    persona: 'p-det', empresa: 'e-det', partido: 'pt-det',
+    medio: 'm-det', cartel: 'c-det', banco: 'b-det',
+    institucion: 'i-det', zede: 'z-det'
+  };
+  nav(routes[tipo] || 'dashboard', id);
 }

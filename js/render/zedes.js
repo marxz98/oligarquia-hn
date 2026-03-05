@@ -34,7 +34,7 @@ function rZedes(c) {
 function rZDet(c, id) {
   const z = DB.zedes.find(x => x.id === id); if (!z) return;
   c.innerHTML = `<div class="pbk" onclick="nav('zedes')">← ZEDEs</div>
-    <div class="phero" style="border-left:4px solid var(--red)">
+    <div class="phero" style="border-left:4px solid var(--red)"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'zede',id:${z.id}})">+ VINCULO</button>
       ${av(z.nombre,'#dc2626',84)}
       <div style="flex:1">
         <div class="phn" style="color:var(--red)">${esc(z.nombre)}</div>
@@ -49,5 +49,6 @@ function rZDet(c, id) {
     ${z.descripcion?`<div class="ds"><h4>DESCRIPCION</h4><div class="df">${esc(z.descripcion)}</div></div>`:''}
     ${z.inversionistas?`<div class="ds"><h4>${ICONS.money} INVERSIONISTAS</h4><div class="df dg">${esc(z.inversionistas)}</div></div>`:''}
     ${z.marco_legal?`<div class="ds"><h4>${ICONS.scale} MARCO LEGAL</h4><div class="df wa">${esc(z.marco_legal)}</div></div>`:''}
+    ${renderVinculos('zede', z.id)}
     ${z.notas?`<div class="ds"><h4>NOTAS</h4><div class="df">${esc(z.notas)}</div></div>`:''}`;
 }

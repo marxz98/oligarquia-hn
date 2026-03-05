@@ -18,7 +18,7 @@ function rGDet(c, nombre) {
   const co = GC[nombre]||'#6b7280'; const ms = DB.personas.filter(p => p.grupoId===g.id);
   const es = DB.empresas.filter(e => e.grupoId===g.id); const meds = DB.medios.filter(m => m.grupoId===g.id);
   c.innerHTML = `<div class="pbk" onclick="nav('grupos')">← Grupos</div>
-    <div class="phero" style="border-left:4px solid ${co}"><button class="ed-btn" onclick="showModal('editGrupo','${nombre}')">✏ EDITAR</button>
+    <div class="phero" style="border-left:4px solid ${co}"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'grupo',id:${g.id}})">+ VINCULO</button><button class="ed-btn" onclick="showModal('editGrupo','${nombre}')">✏ EDITAR</button>
     ${av(nombre,co,84)}<div style="flex:1"><div class="phn" style="color:${co}">${esc(nombre)}</div>
     <div class="psub">${ms.length} personas · ${es.length} empresas${g.origenCapital==='Internacional'?' · '+ICONS.globe+' '+esc(g.paisOrigen||''):''}</div>
     ${g.rankingPoder?`<div style="font-size:11px;color:var(--amb);margin-top:4px">${ICONS.star} Ranking SAR #${g.rankingPoder} · Calificacion: ${g.calificacion||'N/A'} puntos</div>`:''}
@@ -26,6 +26,7 @@ function rGDet(c, nombre) {
     </div></div>
     ${g.descripcion?`<div class="ds"><h4>DESCRIPCION</h4><div class="df">${esc(g.descripcion)}</div></div>`:''}
     ${g.ejesAcumulacion?`<div class="ds"><h4>EJES DE ACUMULACION</h4><div class="df wa">${esc(g.ejesAcumulacion)}</div></div>`:''}
+    ${renderVinculos('grupo', g.id)}
     <div class="sh"><h4 style="font-size:10px;color:var(--red);letter-spacing:2px">INTEGRANTES (${ms.length})</h4>
       <button class="add-btn" onclick="showModal('addPersona','${nombre}')">+ AÑADIR PERSONA</button></div>
     <div class="grid g3">${ms.map(p => `<div class="card" onclick="nav('p-det',${p.id})">

@@ -23,7 +23,7 @@ function rInvestigaciones(c) {
 function rInvDet(c, id) {
   const inv = DB.investigaciones.find(x => x.id === id); if (!inv) return;
   c.innerHTML = `<div class="pbk" onclick="nav('investigaciones')">← Investigaciones</div>
-    <div class="phero" style="border-left:4px solid var(--pur)">
+    <div class="phero" style="border-left:4px solid var(--pur)"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'investigacion',id:${inv.id}})">+ VINCULO</button>
       ${av(inv.nombre,'#8b5cf6',84)}
       <div style="flex:1"><div class="phn" style="color:var(--pur)">${esc(inv.nombre)}</div>
       <div class="psub">${esc(inv.tipo||'')} · ${esc(inv.fuente||'')}</div>
@@ -35,5 +35,6 @@ function rInvDet(c, id) {
     ${inv.resumen?`<div class="ds"><h4>RESUMEN</h4><div class="df">${esc(inv.resumen)}</div></div>`:''}
     ${inv.datos_clave?`<div class="ds"><h4>${ICONS.search} DATOS CLAVE SOBRE HONDURAS</h4><div class="df dg">${esc(inv.datos_clave)}</div></div>`:''}
     ${inv.url_fuente?`<div class="ds"><h4>FUENTE ORIGINAL</h4><div class="df inf"><a href="${esc(inv.url_fuente)}" target="_blank" style="color:var(--blu);word-break:break-all">${esc(inv.url_fuente)}</a></div></div>`:''}
+    ${renderVinculos('investigacion', inv.id)}
     ${inv.notas?`<div class="ds"><h4>NOTAS</h4><div class="df">${esc(inv.notas)}</div></div>`:''}`;
 }

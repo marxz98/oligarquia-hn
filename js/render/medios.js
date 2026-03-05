@@ -14,10 +14,11 @@ function rMDet(c, id) {
   const m = DB.medios.find(x => x.id===id); if (!m) return;
   const cc = GC[m.grupoControlador]||'#06b6d4';
   c.innerHTML = `<div class="pbk" onclick="nav('medios')">← Medios</div>
-    <div class="phero" style="border-left:4px solid ${cc}"><button class="ed-btn" onclick="showModal('editMedio',${m.id})">✏ EDITAR</button>
+    <div class="phero" style="border-left:4px solid ${cc}"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'medio',id:${m.id}})">+ VINCULO</button><button class="ed-btn" onclick="showModal('editMedio',${m.id})">✏ EDITAR</button>
     ${av(m.nombre,cc,84)}<div style="flex:1"><div class="phn">${esc(m.nombre)}</div>
     <div class="psub">${esc(m.canal||'')}</div>
     <div style="font-size:11px;color:${cc};margin-top:3px">GRUPO: ${esc(m.grupoControlador||'')}</div>
     ${m.fundador?`<div style="font-size:10px;color:var(--t3);margin-top:2px">Fundador: ${esc(m.fundador)}</div>`:''}</div></div>
-    <div class="ds"><h4>DESCRIPCIÓN</h4><div class="df">${esc(m.descripcion||'')}</div></div>`;
+    ${renderVinculos('medio', m.id)}
+    <div class="ds"><h4>DESCRIPCION</h4><div class="df">${esc(m.descripcion||'')}</div></div>`;
 }

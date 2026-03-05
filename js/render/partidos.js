@@ -9,8 +9,9 @@ function rPartidos(c) {
 function rPtDet(c, id) {
   const p = DB.partidos.find(x => x.id===id); if (!p) return;
   c.innerHTML = `<div class="pbk" onclick="nav('partidos')">← Partidos</div>
-    <div class="phero" style="border-left:4px solid ${p.color}">${av(p.siglas,p.color,84)}
+    <div class="phero" style="border-left:4px solid ${p.color}"><button class="ed-btn" style="right:90px" onclick="event.stopPropagation();showModal('addVinculo',{tipo:'partido',id:${p.id}})">+ VINCULO</button>${av(p.siglas,p.color,84)}
     <div style="flex:1"><div class="phn" style="color:${p.color}">${esc(p.nombre)}</div>
     <div class="psub">${esc(p.siglas)} · Fundado ${p.fundado}</div></div></div>
-    <div class="ds"><h4>DESCRIPCIÓN</h4><div class="df">${esc(p.descripcion)}</div></div>`;
+    <div class="ds"><h4>DESCRIPCION</h4><div class="df">${esc(p.descripcion)}</div></div>
+    ${renderVinculos('partido', p.id)}`;
 }

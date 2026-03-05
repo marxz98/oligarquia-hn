@@ -2,10 +2,10 @@
 // APP — Navigation, state, initialization
 // ═══════════════════════════════════════════════════════════
 
-let page = 'dashboard', filt = 'todos', sim = null;
+let page = 'dashboard', pageId = null, filt = 'todos', sim = null;
 
 function nav(pg, dt) {
-  page = pg;
+  page = pg; pageId = dt||null;
   document.querySelectorAll('.sb-item').forEach(el => el.classList.toggle('active', el.dataset.pg === pg));
   document.querySelector('.sidebar').classList.remove('open');
   const c = document.getElementById('content');
